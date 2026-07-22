@@ -1,0 +1,14 @@
+{
+  "best_val_loss": 0.052564570371479914,
+  "final_train_loss": 0.0022634371023048604,
+  "final_val_loss": 0.05407232725046535,
+  "epochs": 50,
+  "train_samples": 6722,
+  "val_samples": 935,
+  "dim_labels": [
+    "vx_b",
+    "vy_b",
+    "vz_b",
+    "yaw_rate"
+  ]
+}

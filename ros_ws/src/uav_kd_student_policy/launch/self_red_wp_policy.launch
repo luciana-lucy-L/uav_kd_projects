@@ -1,0 +1,21 @@
+<launch>
+  <arg name="model_path"    default="$(env HOME)/uav_kd_project/runs/self_red_wp/20260704_162940/best_model.pt"/>
+  <arg name="hidden_dim"    default="256"/>
+  <arg name="K"             default="10"/>
+  <arg name="image_size"    default="224"/>
+  <arg name="lookahead"     default="1.0"/>
+  <arg name="pub_rate"      default="20"/>
+  <arg name="takeoff_delay" default="3.0"/>
+
+  <node name="self_red_wp_policy_node" pkg="uav_kd_student_policy" type="run_self_red_wp_policy.py"
+        output="screen" required="true"
+        launch-prefix="/home/l/miniconda3/envs/dbc241/bin/python3">
+    <param name="model_path"    value="$(arg model_path)"/>
+    <param name="hidden_dim"    value="$(arg hidden_dim)"/>
+    <param name="K"             value="$(arg K)"/>
+    <param name="image_size"    value="$(arg image_size)"/>
+    <param name="lookahead"     value="$(arg lookahead)"/>
+    <param name="pub_rate"      value="$(arg pub_rate)"/>
+    <param name="takeoff_delay" value="$(arg takeoff_delay)"/>
+  </node>
+</launch>

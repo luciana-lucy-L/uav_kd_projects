@@ -1,0 +1,29 @@
+dataset:
+  processed_dir: data/processed/uav_kd_v001
+  image_size:
+  - 224
+  - 224
+  filter_static: true
+  filter_valid_traj: false
+model:
+  pretrained: true
+  freeze_backbone: false
+  hidden_dim: 256
+  dropout: 0.3
+loss:
+  weights:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+train:
+  epochs: 50
+  batch_size: 32
+  num_workers: 2
+  lr: 0.0001
+  weight_decay: 0.0001
+  lr_scheduler: cosine
+  lr_warmup_epochs: 3
+output:
+  runs_dir: runs/bc
+  save_every: 10

@@ -1,0 +1,10 @@
+<launch>
+  <!-- 专家数据录制节点 -->
+  <node pkg="uav_bc_tools"
+        type="record_expert.py"
+        name="expert_recorder"
+        output="screen">
+    <!-- 可以通过这个参数改输出目录，不写的话默认 ~/uav_bc_training/data -->
+    <param name="output_dir" value="$(env HOME)/uav_bc_training/data" />
+  </node>
+</launch>

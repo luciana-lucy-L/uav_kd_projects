@@ -1,0 +1,32 @@
+{
+  "best_val_loss": 0.08428056875587756,
+  "final_train_loss": 0.005781183590773831,
+  "final_val_loss": 0.08956351097452515,
+  "final_val_ctrl_loss": 0.04594935796955875,
+  "final_val_traj_loss": 0.04361415329052873,
+  "final_val_ate": 0.2508431503443214,
+  "final_val_dim_mse": [
+    0.08667811006307602,
+    0.0213983952999115,
+    3.728750471054809e-06,
+    0.07571719586849213
+  ],
+  "final_val_yr_std": 0.13306882977485657,
+  "final_val_yr_frac_gt_0.15": 0.15911730545876887,
+  "lambda_traj": 1.0,
+  "K": 10,
+  "curriculum": {
+    "lookahead": 1.0,
+    "p_self_start_epoch": 5,
+    "p_self_ramp_end_epoch": 35
+  },
+  "epochs": 50,
+  "train_samples": 6004,
+  "val_samples": 861,
+  "dim_labels": [
+    "vx_b",
+    "vy_b",
+    "vz_b",
+    "yaw_rate"
+  ]
+}

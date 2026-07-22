@@ -1,0 +1,14 @@
+<launch>
+  <!-- Launch ONLY dynamic_navigation_node (trajectory planner).
+       Uses absolute paths for rosparam files so cerlab_ws path lookup is not needed.
+       Does NOT launch tracking_controller_node — student policy handles cmd_vel. -->
+
+  <rosparam file="/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/autonomous_flight/cfg/dynamic_navigation/fake_detector_param.yaml" />
+  <rosparam file="/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/autonomous_flight/cfg/dynamic_navigation/flight_base.yaml"          ns="autonomous_flight"/>
+  <rosparam file="/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/autonomous_flight/cfg/dynamic_navigation/planner_param.yaml" />
+  <rosparam file="/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/autonomous_flight/cfg/dynamic_navigation/mapping_param.yaml"         ns="/dynamic_map" />
+  <rosparam file="/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/autonomous_flight/cfg/dynamic_navigation/dynamic_detector_param.yaml" ns="/onboard_detector" />
+
+  <node pkg="autonomous_flight" type="dynamic_navigation_node"
+        name="dynamic_navigation_node" output="screen" />
+</launch>

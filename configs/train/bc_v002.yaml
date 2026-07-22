@@ -1,0 +1,34 @@
+# BC on uav_kd_v002 — sanity check whether enriched rotation data (ep_006/008/009
+# merged in, degenerate spot-turn traj filtered) moves yaw_rate val MSE off ~0.
+# Usage:
+#   conda activate dbc241
+#   cd /home/l/uav_kd_project
+#   python kd_uav/train/train_bc.py --config configs/train/bc_v002.yaml
+
+dataset:
+  processed_dir: data/processed/uav_kd_v002
+  image_size: [224, 224]
+  filter_static: true
+  filter_valid_traj: false      # BC uses ctrl_body only; no traj filter needed
+
+model:
+  pretrained: true              # ImageNet pretrained MobileNetV2 backbone
+  freeze_backbone: false        # fine-tune entire network
+  hidden_dim: 256
+  dropout: 0.3
+
+loss:
+  weights: [1.0, 1.0, 1.0, 1.0]  # [vx_b, vy_b, vz_b, yaw_rate]
+
+train:
+  epochs: 50
+  batch_size: 32
+  num_workers: 2
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  lr_scheduler: cosine          # cosine | step | none
+  lr_warmup_epochs: 3
+
+output:
+  runs_dir: runs/bc_v002
+  save_every: 10                # save checkpoint every N epochs

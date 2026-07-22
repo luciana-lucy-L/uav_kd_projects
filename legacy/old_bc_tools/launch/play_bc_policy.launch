@@ -1,0 +1,15 @@
+<launch>
+  <!-- 1. 启动 non-PX4 仿真环境 -->
+  <include file="$(find uav_simulator)/launch/start.launch" />
+
+  <!-- 2. 启动 BC 策略节点 -->
+  <node pkg="uav_bc_tools"
+        type="bc_policy_node.py"
+        name="bc_policy_node"
+        output="screen">
+    <!-- 模型路径可以改，不填就用默认 ~/uav_bc_training/models/bc_policy.pt -->
+    <param name="model_path" value="$(env HOME)/uav_bc_training/models/bc_policy.pt" />
+    <!-- 控制频率 -->
+    <param name="rate" value="20.0" />
+  </node>
+</launch>

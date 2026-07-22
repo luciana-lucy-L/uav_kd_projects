@@ -1,0 +1,52 @@
+# ── Dataset (21 GB, not tracked) ─────────────────────────────────────────
+data/
+
+# ── Model checkpoints (.pt files, ~10-12 MB each, 35 total = 368 MB) ─────
+# Keep: config.yaml, train.log, metrics.json, loss_curve.png
+**/*.pt
+**/*.pth
+
+# ── Result videos ─────────────────────────────────────────────────────────
+results/videos/
+
+# ── ROS build artifacts ───────────────────────────────────────────────────
+ros_ws/build/
+ros_ws/devel/
+ros_ws/.catkin_tools/
+ros_ws/logs/
+*.bag
+
+# ── Legacy binary data ────────────────────────────────────────────────────
+legacy/old_bc_training/models/
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+*.so
+
+# ── Jupyter ───────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── Environment / secrets ─────────────────────────────────────────────────
+.env
+.env.*
+*.key
+*.secret
+
+# ── Editor ────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

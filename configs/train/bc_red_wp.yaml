@@ -1,0 +1,37 @@
+# BC Red-Waypoint Training Config
+# Image input includes projected red waypoint dot (lookahead=1.0m).
+# Only wp_visible=True frames used (3515 total, 3040 train / 475 val).
+# All other hyperparams identical to bc.yaml for fair comparison.
+#
+# Usage:
+#   conda activate dbc241
+#   cd /home/l/uav_kd_project
+#   python kd_uav/train/train_bc.py --config configs/train/bc_red_wp.yaml
+
+dataset:
+  processed_dir: data/processed/uav_kd_red_wp_v001
+  image_size: [224, 224]
+  filter_static: true
+  filter_valid_traj: false
+
+model:
+  pretrained: true
+  freeze_backbone: false
+  hidden_dim: 256
+  dropout: 0.3
+
+loss:
+  weights: [1.0, 1.0, 1.0, 1.0]  # [vx_b, vy_b, vz_b, yaw_rate]
+
+train:
+  epochs: 50
+  batch_size: 32
+  num_workers: 2
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  lr_scheduler: cosine
+  lr_warmup_epochs: 3
+
+output:
+  runs_dir: runs/bc_red_wp
+  save_every: 10

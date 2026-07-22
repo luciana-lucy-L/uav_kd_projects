@@ -1,0 +1,25 @@
+{
+  "best_val_loss": 0.08852807549234051,
+  "final_train_loss": 0.005835805242672005,
+  "final_val_loss": 0.09380750508673931,
+  "final_val_ctrl_loss": 0.04866670475327318,
+  "final_val_traj_loss": 0.04514080009982423,
+  "final_val_ate": 0.25685013323572314,
+  "final_val_dim_mse": [
+    0.0915643647313118,
+    0.02108064852654934,
+    4.512675786827458e-06,
+    0.08201728016138077
+  ],
+  "lambda_traj": 1.0,
+  "K": 10,
+  "epochs": 50,
+  "train_samples": 6004,
+  "val_samples": 861,
+  "dim_labels": [
+    "vx_b",
+    "vy_b",
+    "vz_b",
+    "yaw_rate"
+  ]
+}

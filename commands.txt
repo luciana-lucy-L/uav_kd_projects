@@ -1,0 +1,134 @@
+ #Teacher flight
+  Teacher 起飞（Terminal 2）
+  bash /home/l/uav_kd_project/scripts/launch_teacher.sh
+  启动后在 RViz 里发 2D Nav Goal 让 UAV 开始飞。
+ 
+  ---
+  打开摄像头（任意 Terminal）
+  bash /home/l/uav_kd_project/scripts/view_camera.sh
+  
+  ---
+  记录数据（Terminal 4，teacher 飞行中）
+  bash /home/l/uav_kd_project/scripts/launch_collector.sh ep_001
+  ep_001 是 episode 名字，可以自定义。Ctrl+C 结束记录。
+ 
+ 
+ 
+ 
+ 
+ 
+ #Student flight (without red spot)
+Terminal 1 — 仿真器
+  bash /home/l/uav_kd_project/scripts/launch_sim.sh
+  等 Gazebo 完全启动，UAV 出现在场景中。
+
+  ---
+  Terminal 2 — BC 学生策略
+  bash /home/l/uav_kd_project/scripts/launch_student_bc.sh
+  节点会自动起飞，3 秒后开始用 BC 模型控制飞行。
+
+  ---
+   Terminal 3（可选）— RViz 监视
+  bash /home/l/uav_kd_project/scripts/launch_rviz.sh
+  可以看到 UAV 在空间中的位置和飞行轨迹。
+  
+  打开摄像头（任意 Terminal）
+  bash /home/l/uav_kd_project/scripts/view_camera.sh
+
+
+
+
+#Student flight (plain BC)
+   ---
+   终端 1 — 仿真
+   bash /home/l/uav_kd_project/scripts/launch_sim.sh
+
+   终端 2 — BC student policy（v002模型，自主起飞，不需要手动发目标点）
+   bash /home/l/uav_kd_project/scripts/launch_student_bc.sh /home/l/uav_kd_project/runs/bc_v002/20260701_142506/best_model.pt
+
+   终端 3（可选）— RViz
+   bash /home/l/uav_kd_project/scripts/launch_rviz.sh
+
+   终端 4（可选）— 实时相机画面
+   bash /home/l/uav_kd_project/scripts/view_camera.sh
+
+   终端 5（可选）— 录制这次飞行数据（rosbag + images/CSV）
+   bash /home/l/uav_kd_project/scripts/launch_collector.sh <episode_id>
+   
+   
+
+#Student flight (TrajKD)
+  ---
+  终端 1 — 仿真
+  bash /home/l/uav_kd_project/scripts/launch_sim.sh
+  
+  终端 2 — TrajKD student policy（ctrl-only推理，trajectory head不参与部署，自主起飞，不需要手动发目标点）
+  bash /home/l/uav_kd_project/scripts/launch_student_traj_kd.sh /home/l/uav_kd_project/runs/traj_kd/20260702_131051/best_model.pt
+
+  终端 3（可选）— RViz
+  bash /home/l/uav_kd_project/scripts/launch_rviz.sh
+  
+  终端 4（可选）— 实时相机画面
+  bash /home/l/uav_kd_project/scripts/view_camera.sh
+  
+  终端 5（可选）— 录制这次飞行数据（rosbag + images/CSV）
+  bash /home/l/uav_kd_project/scripts/launch_collector.sh <episode_id>
+
+
+
+
+
+
+ #Student flight (with red spot)
+ ---
+  终端 1 — 仿真
+  bash /home/l/uav_kd_project/scripts/launch_sim.sh
+
+  终端 2 — RViz
+  bash /home/l/uav_kd_project/scripts/launch_rviz.sh
+  
+  终端 3 — 路径规划器（只出轨迹，不控制 UAV）
+  bash /home/l/uav_kd_project/scripts/launch_dynamic_nav.sh
+
+  终端 4 — BC-RedWP student policy
+   source /home/l/catkin_ws/devel/setup.bash
+  source /home/l/uav_kd_project/ros_ws/devel/setup.bash
+  roslaunch uav_kd_student_policy bc_red_wp_policy.launch
+
+  然后在 RViz 发送 2D Nav Goal → student 收到 bspline_trajectory 后开始飞行
+  
+  终端 5 — 实时调试图像（带红点 + 状态文字）
+  rosrun image_view image_view image:=/bc_red_wp/debug_image
+  
+  
+  
+  
+  
+  
+  
+  
+  #数据脚本录制
+
+  bash /home/l/uav_kd_project/scripts/record_flight.sh bc_red_wp
+  
+  如果用 BC Baseline 测试（没有红点），换成：
+  bash /home/l/uav_kd_project/scripts/record_flight.sh bc_baseline /camera/color/image_raw
+
+  ---
+  流程说明：
+
+  1. 脚本自动找 Gazebo 和 RViz 窗口（按名称搜索）
+  2. 同时启动三路录制：
+    - ffmpeg 抓 Gazebo 窗口
+    - ffmpeg 抓 RViz 窗口
+    - Python ROS 节点录 /bc_red_wp/debug_image（带红点）
+  3. 按 Ctrl+C → 自动停止 → 拼接 → 保存
+ 
+  输出位置：
+  results/videos/bc_red_wp_test001.mp4   ← 自动编号，已有则 test002...
+  
+  格式： [Gazebo | RViz | 相机带红点] 三格横排，统一 480p 高度
+
+  查看录制信息
+  ffplay /home/l/uav_kd_project/results/videos/bc_baseline_test001.mp4
+

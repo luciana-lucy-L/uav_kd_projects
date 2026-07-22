@@ -1,0 +1,14 @@
+[Plot 4: Yaw Rate Validation MSE Curves (v002 methods)]
+
+Yaw_rate validation MSE over training. Dots mark each method's per-dimension minimum.
+
+Key observations:
+- BC-v002 (blue):   MSE briefly dips at ep4-5 then rebounds; single-frame BC cannot capture
+                    turning intent, leading to poor generalisation.
+- TrajKD / SelfRedWP: planning supervision yields a slightly lower minimum (~0.075-0.082),
+  showing that trajectory-level KD injects directional signals into the backbone.
+- SelfRedWP achieves lower yaw_rate MSE in the post-curriculum phase (ep35+),
+  confirming that the self-predicted waypoint curriculum aids turning generalisation.
+
+Expected next step: CtrlKD's H-step sequence distillation should further reduce
+yaw_rate MSE and temporal oscillation via smoothness constraints.

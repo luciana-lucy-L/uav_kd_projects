@@ -1,0 +1,12 @@
+[Plot 2: Per-Dimension Control Validation MSE (v002 methods)]
+
+Grouped bar chart: vx/vy/vz/yaw_rate validation MSE for BC-v002, TrajKD, SelfRedWP.
+Each method uses the values at its best-val epoch for fair comparison.
+Grey hatched bars are placeholders for CtrlKD and JointKD (not yet trained).
+
+Key observations:
+- vz (vertical velocity) is near 0 -- dataset is predominantly level flight, no learning signal.
+- yaw_rate is the hardest dimension (highest MSE); requires scene-level turning intent.
+- TrajKD and SelfRedWP show a small improvement over BC-v002 on yaw_rate,
+  suggesting planning supervision injects directional signals into the backbone.
+- vy (lateral) is stable at ~0.02 across all methods, converges best.

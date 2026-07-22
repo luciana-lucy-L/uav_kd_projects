@@ -1,0 +1,36 @@
+# TrajKD (Option B) Training Config
+# Usage:
+#   conda activate dbc241
+#   cd /home/l/uav_kd_project
+#   python kd_uav/train/train_traj_kd.py --config configs/train/traj_kd.yaml
+
+dataset:
+  processed_dir: data/processed/uav_kd_v002
+  image_size: [224, 224]
+  filter_static: true
+  filter_valid_traj: true       # required: trajectory supervision needs non-degenerate labels
+
+model:
+  pretrained: true              # ImageNet pretrained MobileNetV2 backbone
+  freeze_backbone: false        # fine-tune entire network
+  hidden_dim: 256
+  dropout: 0.3
+  K: 10                         # number of future body-frame waypoints
+
+loss:
+  ctrl_weights: [1.0, 1.0, 1.0, 1.0]   # [vx_b, vy_b, vz_b, yaw_rate]
+  traj_weights: [1.0, 1.0, 1.0]        # [dx, dy, dz]
+  lambda_traj: 1.0                     # L = lambda_traj * L_traj + L_ctrl
+
+train:
+  epochs: 50
+  batch_size: 32
+  num_workers: 2
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  lr_scheduler: cosine          # cosine | step | none
+  lr_warmup_epochs: 3
+
+output:
+  runs_dir: runs/traj_kd
+  save_every: 10                # save checkpoint every N epochs

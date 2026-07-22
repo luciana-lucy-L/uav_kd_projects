@@ -1,0 +1,14 @@
+[Plot 1: Validation Loss Curves (v002 methods)]
+
+Validation total loss over 50 epochs for BC-v002, TrajKD, and SelfRedWP on the uav_kd_v002 dataset.
+Dashed vertical lines mark the best-val epoch for each method.
+
+Important: BC-v002 loss = ctrl MSE only; TrajKD/SelfRedWP loss = ctrl + lambda*traj weighted sum.
+Absolute values are NOT comparable across methods.
+
+Key observations:
+- BC-v002 (blue):    best val=0.0526 @ ep23, converges fastest, no planning supervision.
+- TrajKD (orange):   best val=0.0885 @ ep9, oscillates afterward; traj head adds variance on limited data.
+- SelfRedWP (green): best val=0.0843, curriculum (ep5->35) yields a smoother late-training curve.
+
+CtrlKD and JointKD results to be added after training.

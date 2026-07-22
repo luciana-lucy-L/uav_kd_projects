@@ -1,0 +1,56 @@
+<launch>
+  <!-- ─── Episode parameters ─────────────────────────────────────── -->
+  <!-- Unique identifier for this recording session -->
+  <arg name="episode_id"      default="ep_001"/>
+  <!-- Root directory where all episodes are saved -->
+  <arg name="output_dir"      default="/home/l/uav_kd_project/data/raw"/>
+  <!-- World name (stored in metadata only, does not change the sim) -->
+  <arg name="world"           default="corridor_dynamic_9_nohuman"/>
+
+  <!-- ─── Trajectory extraction ────────────────────────────────────── -->
+  <!-- Number of future waypoints to extract from bspline_trajectory -->
+  <arg name="K"               default="10"/>
+  <!-- Min body-frame lookahead (m) for first extracted waypoint.
+       Skips waypoints at or behind the UAV. -->
+  <arg name="traj_lookahead"  default="0.15"/>
+
+  <!-- ─── Sync and sampling ────────────────────────────────────────── -->
+  <!-- Wall-clock freshness threshold (seconds): skip frame if any topic
+       has not been heard within this window -->
+  <arg name="sync_tolerance"  default="1.0"/>
+  <!-- Set to true to enable frame skipping -->
+  <arg name="downsample"      default="false"/>
+  <!-- Save every N-th image when downsample is true -->
+  <arg name="downsample_step" default="3"/>
+
+  <!-- ─── Data collector node ──────────────────────────────────────── -->
+  <node pkg="uav_kd_data_collector"
+        type="record_teacher_data.py"
+        name="uav_kd_data_collector"
+        output="screen"
+        required="true"
+        launch-prefix="/usr/bin/python3">
+    <param name="episode_id"      value="$(arg episode_id)"/>
+    <param name="output_dir"      value="$(arg output_dir)"/>
+    <param name="world"           value="$(arg world)"/>
+    <param name="K"               value="$(arg K)"               type="int"/>
+    <param name="traj_lookahead"  value="$(arg traj_lookahead)"  type="double"/>
+    <param name="sync_tolerance"  value="$(arg sync_tolerance)"  type="double"/>
+    <param name="downsample"      value="$(arg downsample)"      type="bool"/>
+    <param name="downsample_step" value="$(arg downsample_step)" type="int"/>
+  </node>
+
+  <!-- ─── Rosbag recorder ──────────────────────────────────────────── -->
+  <!-- Records the raw source-of-truth bag under <episode_id>/rosbag/flight.bag
+       The output directory is created by launch_collector.sh before roslaunch.
+       required=false so a bag write error does not kill the collector node. -->
+  <node pkg="rosbag" type="record" name="rosbag_record"
+        args="-O $(arg output_dir)/$(arg episode_id)/rosbag/flight
+              /camera/color/image_raw
+              /autonomous_flight/target_state
+              /dynamicNavigation/bspline_trajectory
+              /CERLAB/quadcopter/odom
+              /CERLAB/quadcopter/pose"
+        output="screen"
+        required="false"/>
+</launch>

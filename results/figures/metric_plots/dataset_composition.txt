@@ -1,0 +1,14 @@
+[Plot 5: Dataset Composition — uav_kd_v002]
+
+Frame counts per episode, split by train (blue) / val (red) and straight vs rotation frames
+(hatched, |yaw_rate|>0.15 rad/s). ep_001 and ep_002 are excluded due to traj_body bug.
+
+Key observations:
+- ep_007 (4406 frames) is the longest episode with the highest rotation ratio (22.9%).
+  It is the primary source of turning behaviour for the model.
+- ep_005 (pure straight, val) provides a simple distribution reference.
+  ep_006 (18.2% rotation, val) makes the v002 val set representative of turning.
+- Overall rotation ratio ~11-12%; dataset is straight-flight dominated.
+  This explains why vz MSE ~0 and yaw_rate learning signal is sparse.
+
+Recommendation: collect more episodes with higher rotation ratios to improve turning generalisation.

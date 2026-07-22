@@ -1,0 +1,14 @@
+[Plot 6: Train vs Validation Loss Gap — Overfitting Analysis (v002 methods)]
+
+Each sub-panel shows train loss (solid) vs val loss (dashed) for one method.
+The text annotation gives the final-epoch train-val gap; the dotted line marks the best-val epoch.
+
+Key observations:
+- All methods overfit substantially: train loss falls near 0 while val loss plateaus or rises.
+- BC-v002:   final gap ~0.051 (train~0.002, val~0.054); stable after ep23.
+- TrajKD:    final gap ~0.088; val loss oscillates more, dual-head distillation
+             increases generalisation difficulty on 6004 training samples.
+- SelfRedWP: similar gap to TrajKD, but val loss shows a slight downward trend
+             after curriculum end (ep35), suggesting curriculum aids late-stage generalisation.
+
+Mitigation directions: more episodes, stronger data augmentation, tuning dropout/weight_decay.

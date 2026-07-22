@@ -1,0 +1,15 @@
+[Plot 3: Trajectory ATE Curves (TrajKD vs SelfRedWP)]
+
+Validation ATE (average trajectory error, in metres) over training epochs.
+ATE measures the mean displacement error between the trajectory head's K=10 predicted
+waypoints and the teacher B-spline planner waypoints.
+Dots mark the ATE at each method's best-val epoch; grey dotted lines mark SelfRedWP's curriculum.
+
+Key observations:
+- Early epochs (ep1-5): ATE ~0.32m, drops quickly to ~0.25m, then oscillates.
+- SelfRedWP achieves slightly lower ATE after curriculum end (ep35), confirming that
+  self-predicted waypoint supervision helps stabilise trajectory prediction.
+- Final ATE ~0.25m: ~25cm deviation over 1m lookahead, acceptable for visual navigation.
+
+Note: the trajectory head is a training-only auxiliary and is discarded at deployment.
+ATE is an indirect measure of how well the backbone encodes the teacher's planning intent.
