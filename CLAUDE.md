@@ -30,11 +30,16 @@ render the predicted waypoint onto the image as a red dot and condition the
 control head on it directly, so the plan is explicit, not just backbone
 regularization. Trained with a curriculum (ground-truth waypoint → model's
 own predicted waypoint) to avoid train/deploy mismatch. Motivated directly
-by TrajKD's turning problem above. [NEXT — see docs/04_experiment_log.md]
+by TrajKD's turning problem above. [DONE, 2026-07-04 — offline metrics beat
+                                     BC and TrajKD, but Gazebo deployment still
+                                     stalls at ~the same obstacle as TrajKD;
+                                     see docs/04_experiment_log.md and DONE.md §6]
         ↓
-Train CtrlKD (ablation B — execution knowledge only)
+Train CtrlKD (ablation B — execution knowledge only)         [NOT STARTED — no
+                                                                code written yet]
         ↓
-Train JointKD (proposed method)
+Train JointKD (proposed method)                                [NOT STARTED — no
+                                                                code written yet]
         ↓
 Offline ablation evaluation
         ↓
@@ -52,11 +57,17 @@ Experiment roles (see research.md Section 7 for design rationale):
 - CtrlKD:    ablation B (execution knowledge only, H-step sequence)
 - JointKD:   proposed method (planning + execution, traj head auxiliary)
 
-Current priority:
-1. Implement and train SelfRedWP (see docs/04_experiment_log.md for design rationale).
-2. Implement and train CtrlKD (H-step control sequence).
-3. Implement and train JointKD.
-4. Run Gazebo ablation comparison.
+Current priority (status as of 2026-09-03):
+1. ~~Implement and train SelfRedWP~~ — DONE (2026-07-04).
+2. Implement and train CtrlKD (H-step control sequence) — NOT STARTED.
+3. Implement and train JointKD — NOT STARTED.
+4. Run Gazebo ablation comparison — NOT STARTED.
+
+Open question (DONE.md §6-7, unresolved): all three trained students (BC/TrajKD/
+SelfRedWP) turn far less than the teacher (yaw_rate std ~30% of teacher's at best),
+and all stall at roughly the same obstacle in deployment. Whether to keep adding
+methods (CtrlKD/JointKD) or first investigate this shared root cause is under
+active discussion — this priority list and research.md are being revisited.
 
 7. Repository Structure Recommendation
 Please organize or inspect the project according to the following structure.
@@ -575,14 +586,14 @@ If time is limited, the minimum useful result should be:
 3. Synchronized dataset v001 built.                                     [DONE]
 4. BC baseline trained and deployed.                                    [DONE]
 5. TrajKD (Option B) trained.                                           [DONE — trained + Gazebo-tested; turning behavior issue found, motivated SelfRedWP]
-6. SelfRedWP trained (new direction, see pipeline note above).
-7. CtrlKD trained.
-8. BC vs TrajKD vs SelfRedWP vs CtrlKD offline comparison.
-9. Preliminary Gazebo deployment for at least BC, TrajKD, and SelfRedWP.
-10. JointKD training started with clear λ ablation plan.
+6. SelfRedWP trained (new direction, see pipeline note above).          [DONE — trained + Gazebo-tested; offline metrics best of the three, but deployment stalls at ~same obstacle as TrajKD]
+7. CtrlKD trained.                                                      [NOT STARTED — no code written]
+8. BC vs TrajKD vs SelfRedWP vs CtrlKD offline comparison.              [PARTIAL — BC/TrajKD/SelfRedWP only, CtrlKD missing]
+9. Preliminary Gazebo deployment for at least BC, TrajKD, and SelfRedWP. [DONE]
+10. JointKD training started with clear λ ablation plan.                [NOT STARTED — no code written]
 
-The midterm presentation can say:
-We propose JointKD, a dual-layer knowledge distillation method that transfers planning-level (trajectory) and execution-level (control sequence) knowledge from a classical UAV autonomy stack to a lightweight front-camera visual policy. BC and ablations (TrajKD, CtrlKD) have been trained and compared offline. JointKD training is underway.
+The midterm presentation can say (status as of 2026-09-03):
+We propose JointKD, a dual-layer knowledge distillation method that transfers planning-level (trajectory) and execution-level (control sequence) knowledge from a classical UAV autonomy stack to a lightweight front-camera visual policy. BC and two ablations (TrajKD, SelfRedWP) have been trained, Gazebo-tested, and compared offline; all three fall well short of teacher-level turning behavior. CtrlKD and JointKD have not yet been started — priority is under review pending root-cause analysis of the shared turning deficit (see DONE.md §6-7).
 
 16. Project History Writing Template
 Use this structure for recording implementation history:

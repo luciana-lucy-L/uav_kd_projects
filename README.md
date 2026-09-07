@@ -31,9 +31,10 @@ The CERLAB source code is an external dependency. It must not be modified.
 |---|---|---|---|---|
 | BC Baseline (rebuilt) | front image | control cmd | MSE(pred, teacher_ctrl) | **Done** — trained on `uav_kd_v002`, deployed & flight-tested in Gazebo (2026-07-01) |
 | BC-RedWP (image + projected waypoint) | front image | control cmd | MSE(pred, teacher_ctrl) | Done — offline metrics on par with BC baseline |
-| Trajectory KD | front image | future trajectory | MSE(pred, teacher_traj) | Pending — next up |
-| Control KD | front image | control cmd | MSE(pred, teacher_ctrl) | Pending |
-| Joint KD | front image | traj + control | weighted combination | Pending |
+| Trajectory KD (TrajKD) | front image | future trajectory + control cmd | λ·MSE(traj) + MSE(ctrl) | Done (2026-07-02) — trained & Gazebo-tested; offline ctrl loss beat BC, but yaw_rate std in deployment was 4x lower than BC (weak turning) |
+| SelfRedWP (self-predicted waypoint + curriculum) | front image | control cmd | MSE(pred, teacher_ctrl) | Done (2026-07-04) — trained & Gazebo-tested; best offline metrics of the three, but deployment still stalls at ~same obstacle as TrajKD |
+| Control KD | front image | control cmd | MSE(pred, teacher_ctrl) | **Not started** — no code written |
+| Joint KD | front image | traj + control | weighted combination | **Not started** — no code written |
 
 ## Implementation Pipeline
 
@@ -96,9 +97,12 @@ uav_kd_project/
 | 3 | Collect teacher demonstration data | Done — 9 episodes (`ep_test_003`–`007`, `ep_006`, `ep_008`, `ep_009`) |
 | 4 | Build synchronized dataset | Done — `uav_kd_v001` (2026-06-29), superseded by `uav_kd_v002` (2026-07-01, adds rotation-diverse episodes + fixes degenerate spot-turn trajectory labels) |
 | 5 | Train rebuilt BC baseline | **Done (baseline phase closed 2026-07-01)** — trained on `uav_kd_v002`, deployed & flight-tested in Gazebo (stable, non-degenerate yaw_rate output). See `docs/04_experiment_log.md`. |
-| 6 | Train Trajectory KD | Pending — next up |
-| 7 | Train Control KD + Joint KD | Pending |
+| 6 | Train Trajectory KD (TrajKD) | Done (2026-07-02) — trained & Gazebo-tested; motivated SelfRedWP (see below) |
+| 6.5 | Train SelfRedWP (new direction) | Done (2026-07-04) — trained & Gazebo-tested; best offline metrics, deployment still stalls |
+| 7 | Train Control KD + Joint KD | **Not started** — no code written. Open question: all three trained students turn far less than the teacher and stall at the same obstacle; whether to debug this shared root cause before adding more methods is under active discussion (`DONE.md` §6-7). |
 | 8 | Evaluation and thesis writing | Pending |
+
+> **Status note (2026-09-03):** No project activity since 2026-07-06. Project direction (whether to proceed with CtrlKD/JointKD as originally planned, or first investigate the shared turning deficit above) is currently under review — `research.md` is expected to be revised accordingly.
 
 ## See Also
 
