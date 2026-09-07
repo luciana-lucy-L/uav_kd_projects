@@ -42,6 +42,7 @@
 |---|---|---|
 | 实现 `kd_uav/diagnostics/`，跑 **T1 / T2 / T4** | 三份诊断报告（图 + 数字） | T1 给出训练集 vs 验证集 yr_std 对比；T4 给出近邻标签差异分布 |
 | 启动 `uav_kd_eval_tools`：定义 SR / CR 判据 | 碰撞检测方案 | 单次飞行能自动判定成功/碰撞 |
+| ⭐ **实机确认教师感知层话题**（10 分钟）：起教师后跑 `rostopic list` + `rostopic hz`，核实 `2D_occupancy_map` / `esdf` / `tracked_bboxes` 等的真实命名空间与频率 | 更新 `52_environment.md` §3.4 的 `<ns>` | 确定第 5 臂候选方案里哪些真的可用 |
 
 **周会**：我在采集新数据之前先做了根因诊断（设计 + 前三项结果）
 
