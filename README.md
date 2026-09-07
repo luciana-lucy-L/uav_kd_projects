@@ -1,112 +1,114 @@
 # UAV Knowledge Distillation Project
 
-**Research Title:** Knowledge Distillation from a Classical Autonomous Flight System for Lightweight Vision-Based UAV Navigation
+**从可分解的经典自主飞行系统向轻量单目视觉导航策略的知识蒸馏**
 
-## Research Overview
+> 状态更新：2026-09-07（v2 研究方向确立） · 详细文档见 [`docs/00_INDEX.md`](docs/00_INDEX.md)
 
-This project transfers navigation capability from the CERLAB Autonomous Flight classical robotics stack (the teacher) to a lightweight vision-based neural network policy (the student). The student uses only a front-facing RGB camera image as input and outputs velocity control commands.
+---
 
-This is **not** standard neural-to-neural knowledge distillation. The teacher is a classical autonomy stack — perception, planning, and control — not a neural network.
+## 一句话
 
-## Teacher System
+用 CERLAB 经典自主飞行栈（感知 + B样条规划 + 跟踪控制）作为**可分解的教师**，系统研究：**它内部的哪一层知识最值得蒸馏给资源受限的单目视觉学生，以及这个答案如何随学生容量和输入扰动而变化。**
 
-**CERLAB Autonomous Flight** (`/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/`)
+---
 
-The teacher provides:
-- **Trajectory knowledge**: planned future waypoints from `trajectory_planner`
-- **Control knowledge**: velocity commands from `tracking_controller` via `/CERLAB/quadcopter/cmd_vel`
-- **State reference**: odometry and pose via `/CERLAB/quadcopter/odom`
+## 研究设计
 
-The CERLAB source code is an external dependency. It must not be modified.
+### 三个轴
 
-## Student Policy
+| 轴 | 内容 | 取值 |
+|---|---|---|
+| **A. 知识层级** | 训练监督信号来源 | BC（动作）/ TrajKD（规划层）/ CtrlKD（执行层）/ JointKD（规划+执行）/ FeatKD（表征层） |
+| **B. 学生容量** | 网络规模（压缩） | α = 1.0 / 0.5 / 0.35 |
+| **C. 扰动鲁棒性** | 评估时的输入扰动 | 干净 / 噪声 / 模糊 / 亮度 / 对比度 /（保留：稀疏对抗） |
 
-- **Input**: front-facing RGB camera image only (`/camera/color/image_raw`)
-- **Output**: velocity command `[vx, vy, vz, yaw_rate]`
-- **No teacher signals at deployment time**
+**核心假设**：结构化的教师知识（轨迹 / 控制序列），相比纯动作模仿，让小容量学生在压缩后与受扰动时退化得更慢。
 
-## Experimental Methods
+**为什么只有本研究能问这个问题**：经典教师是模块化的，中间产物（轨迹、控制序列）语义清晰、可分别摘取。神经教师（RL 策略、特权网络）内部没有"规划层"可摘。
 
-| Method | Input | Output | Loss | Status |
+### 教师 / 学生
+
+| | 教师（CERLAB） | 学生（部署时） |
+|---|---|---|
+| 深度 / 点云 / 地图 / 全局位姿 | ✅ | ❌ |
+| 前视 RGB | ✅ | ✅ |
+| 目标 | 绝对坐标 | 仅**机体系相对目标向量** |
+| 输出 | 轨迹 τ + 控制指令 u | `[vx_b, vy_b, vz_b, yaw_rate]` |
+
+---
+
+## 当前进度
+
+| 轮次 | 周次 | 主题 | 状态 |
+|---|---|---|---|
+| **R1** | W1–W6 | 诊断 + 地基 | 🔄 **进行中（W1）** |
+| R2 | W7–W11 | 知识层级轴 | ⬜ |
+| R3 | W12–W16 | 压缩轴 + 鲁棒性轴 | ⬜ |
+| R4 | W18–W21 | 保留项 + 定稿 | ⬜ |
+
+**下一个动作**：诊断实验 T1 / T2 / T4（[`docs/41_diagnostics.md`](docs/41_diagnostics.md)）
+**下一个决策门**：G0（W2 末）
+
+### R1 要解决的核心问题
+
+v1 的三个学生模型全部无法复现教师的转向能力：
+
+| | 教师 | BC(v002) | TrajKD | SelfRedWP |
 |---|---|---|---|---|
-| BC Baseline (rebuilt) | front image | control cmd | MSE(pred, teacher_ctrl) | **Done** — trained on `uav_kd_v002`, deployed & flight-tested in Gazebo (2026-07-01) |
-| BC-RedWP (image + projected waypoint) | front image | control cmd | MSE(pred, teacher_ctrl) | Done — offline metrics on par with BC baseline |
-| Trajectory KD (TrajKD) | front image | future trajectory + control cmd | λ·MSE(traj) + MSE(ctrl) | Done (2026-07-02) — trained & Gazebo-tested; offline ctrl loss beat BC, but yaw_rate std in deployment was 4x lower than BC (weak turning) |
-| SelfRedWP (self-predicted waypoint + curriculum) | front image | control cmd | MSE(pred, teacher_ctrl) | Done (2026-07-04) — trained & Gazebo-tested; best offline metrics of the three, but deployment still stalls at ~same obstacle as TrajKD |
-| Control KD | front image | control cmd | MSE(pred, teacher_ctrl) | **Not started** — no code written |
-| Joint KD | front image | traj + control | weighted combination | **Not started** — no code written |
+| yaw_rate std | **0.340** | 0.104 | 0.027 | 0.042 |
+| frac(\|yr\|>0.15) | **17.7%** | 10.4% | 0.9% | 3.4% |
 
-## Implementation Pipeline
+三个候选机制（类别不平衡 / 标签多峰 / 辅助 loss 梯度干扰）需要先用五个廉价实验分开，**再决定采什么数据**。
 
-```
-CERLAB teacher system (cerlab_ws)
-    ↓
-Run teacher in Gazebo simulation
-    ↓
-Record synchronized teacher demonstrations
-(front image + pose + odom + cmd_vel + teacher trajectory)
-    ↓
-Build processed dataset (data/processed/uav_kd_v001/)
-    ↓
-Train rebuilt BC baseline   →   Train Trajectory KD
-    ↓
-Train Control KD            →   Train Joint KD
-    ↓
-Offline evaluation + Gazebo deployment evaluation
-    ↓
-Thesis tables and figures
-```
+---
 
-## Repository Layout
+## 目录结构
 
 ```
 uav_kd_project/
-├── ros_ws/src/             ROS packages (data collector, student policy, eval tools)
-├── kd_uav/                 Python training package (models, losses, train, eval, utils)
-├── configs/                YAML config files (data, model, train, eval)
-├── data/raw/               Raw teacher demonstration episodes
-├── data/processed/         Synchronized dataset for training
-├── data/splits/            Train/val/test index files
-├── runs/                   Training run outputs (checkpoints, logs, metrics)
-├── results/                Evaluation outputs (tables, figures, trajectories, videos)
-├── legacy/                 Archive of old state-based BC work (not the formal baseline)
-└── docs/                   Phase logs, topic mapping, data schema, experiment log
+├── README.md              本文件（一页现状）
+├── CLAUDE.md              工作规则 + 文档索引
+├── docs/                  全部文档（见 docs/00_INDEX.md）
+│   └── _archive/          v1 历史版本（只读）
+├── kd_uav/                Python 训练包
+├── configs/               YAML 配置（arms / capacity）
+├── ros_ws/src/            ROS 包（采集 / 部署 / 评估）
+├── data/raw|processed/    原始 / 处理后数据
+├── runs/                  训练输出
+├── results/               表格 / 图表 / 部署记录
+├── scripts/               启动脚本
+└── legacy/                v0 的状态式 BC 存档（非正式基线）
 ```
 
-## External Dependencies
+---
 
-| Dependency | Path | Purpose |
+## 外部依赖（不可修改）
+
+| 依赖 | 路径 | 作用 |
 |---|---|---|
-| CERLAB Autonomy Stack | `/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/` | Teacher system — do not modify |
-| UAV Simulator | `/home/l/catkin_ws/src/uav_simulator/` | Gazebo worlds and UAV plugin |
+| CERLAB Autonomy Stack | `/home/l/cerlab_ws/src/CERLAB-UAV-Autonomy/` | **教师系统** |
+| UAV Simulator | `/home/l/catkin_ws/src/uav_simulator/` | Gazebo world 与 UAV 模型 |
 
-## Important Notes
+---
 
-- The `legacy/` directory contains a preliminary state-based BC implementation. It is **not** the formal baseline. See `legacy/README.md`.
-- The formal BC baseline will be rebuilt from CERLAB teacher demonstrations using front-camera images.
-- The student policy must use **only** the front camera image during deployment.
-- Train/val/test splits must be done **by episode**, not by random frame.
+## 快速开始
 
-## Phase Status
+```bash
+# 环境（训练）
+source ~/miniconda3/etc/profile.d/conda.sh && conda activate dbc241
 
-| Phase | Goal | Status |
-|---|---|---|
-| 0 | Project audit and environment check | Done (2026-06-28) |
-| 1 | Reproduce CERLAB teacher automatic flight | Done (2026-06-28) |
-| 2 | Define teacher knowledge and topics | Done |
-| 3 | Collect teacher demonstration data | Done — 9 episodes (`ep_test_003`–`007`, `ep_006`, `ep_008`, `ep_009`) |
-| 4 | Build synchronized dataset | Done — `uav_kd_v001` (2026-06-29), superseded by `uav_kd_v002` (2026-07-01, adds rotation-diverse episodes + fixes degenerate spot-turn trajectory labels) |
-| 5 | Train rebuilt BC baseline | **Done (baseline phase closed 2026-07-01)** — trained on `uav_kd_v002`, deployed & flight-tested in Gazebo (stable, non-degenerate yaw_rate output). See `docs/04_experiment_log.md`. |
-| 6 | Train Trajectory KD (TrajKD) | Done (2026-07-02) — trained & Gazebo-tested; motivated SelfRedWP (see below) |
-| 6.5 | Train SelfRedWP (new direction) | Done (2026-07-04) — trained & Gazebo-tested; best offline metrics, deployment still stalls |
-| 7 | Train Control KD + Joint KD | **Not started** — no code written. Open question: all three trained students turn far less than the teacher and stall at the same obstacle; whether to debug this shared root cause before adding more methods is under active discussion (`DONE.md` §6-7). |
-| 8 | Evaluation and thesis writing | Pending |
+# 环境（ROS）—— 必须先 conda deactivate
+source ~/miniconda3/etc/profile.d/conda.sh && conda deactivate
+source /home/l/catkin_ws/devel/setup.bash
+source /home/l/cerlab_ws/devel/setup.bash
+```
 
-> **Status note (2026-09-03):** No project activity since 2026-07-06. Project direction (whether to proceed with CtrlKD/JointKD as originally planned, or first investigate the shared turning deficit above) is currently under review — `research.md` is expected to be revised accordingly.
+完整启动序列、话题映射、常用命令见 [`docs/52_environment.md`](docs/52_environment.md)。
 
-## See Also
+---
 
-- `CLAUDE.md` — full project specification and rules for Claude
-- `docs/01_environment_log.md` — environment audit result
-- `docs/02_topic_mapping.md` — CERLAB ROS topic map (to be filled in Phase 1)
-- `docs/04_experiment_log.md` — running experiment log
+## 时间线
+
+2026-09-07 → 2027-01-31（21 周），4–5 天/周 × 5–8 h。
+四轮螺旋：R1+R2 完成即构成合格论文主体，R3 补齐压缩与鲁棒两轴，R4 整轮可牺牲。
+详见 [`docs/30_plan.md`](docs/30_plan.md) 与 [`docs/31_schedule.md`](docs/31_schedule.md)。
