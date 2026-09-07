@@ -161,7 +161,7 @@ UAV 原地旋转（不平移）时 `bspline_trajectory` 不重新发布 → 该�
 
 ## 5. v2 采集协议
 
-> ⚠️ **本节的具体参数待 R1 诊断结论确定**（见 `41_diagnostics.md`）。诊断结果直接决定要采什么数据。
+> ⚠️ **本节的具体参数待 R1 诊断结论确定**（见 `40_experiments/41_diagnostics.md`）。诊断结果直接决定要采什么数据。
 
 ### 5.1 诊断结论 → 采集策略的映射
 
@@ -174,7 +174,7 @@ UAV 原地旋转（不平移）时 `bspline_trajectory` 不重新发布 → 该�
 
 ### 5.2 采集流程（固定不变的部分）
 
-1. 启动顺序见 `52_environment.md`（Gazebo → CERLAB teacher → RViz）
+1. 启动顺序见 `50_records/52_environment.md`（Gazebo → CERLAB teacher → RViz）
 2. 等待自动起飞完成（约 2–5 秒，起飞高度 1.0 m）
 3. 用 RViz 的 **2D Nav Goal** 下发目标点 → **同时被采集节点记录**
 4. 一个 episode 内可连续下发多个目标点，`goal_id` 递增
@@ -230,7 +230,7 @@ result:
 | `uav_kd_red_wp_v001` | 3040 / 475 | — | ⛔ SelfRedWP 方向已废弃 |
 | `uav_kd_debug_v000/v001` | — | — | ⛔ 仅 pipeline 验证 |
 
-**v1 的 9 个 raw episode 与 5 个训练好的模型必须保留**，R1 诊断直接依赖它们。详见 `41_diagnostics.md`。
+**v1 的 9 个 raw episode 与 5 个训练好的模型必须保留**，R1 诊断直接依赖它们。详见 `40_experiments/41_diagnostics.md`。
 
 ### v1 数据的 episode 统计
 

@@ -1,7 +1,7 @@
 # 文档索引与维护规则
 
 > 本文件是所有文档的地图。**新增文档必须先在这里登记。**
-> 最后更新：2026-09-07（v2 文档体系建立）
+> 最后更新：2026-09-07（v2 文档体系建立；按段位拆分为文件夹）
 
 ---
 
@@ -17,10 +17,25 @@
 | `30–39` | **计划层** | 中 | 轮次切换、进度调整时 |
 | `40–49` | **实验层** | 中 | 新增实验臂、评估协议变更时 |
 | `50–59` | **记录层** | 高 | 每次实验、每次踩坑 |
+| `60–69` | **输出层** | 中 | 出图、写论文素材时 |
 | `_archive/` | 归档 | 只读 | 永不修改 |
 
 **核心原则：改一件事只需要改一个文件。**
 研究方向变 → 只改 `10`；进度滑 → 只改 `31`；加一个实验臂 → 只改 `40`。
+
+**每个段位一个文件夹：**
+
+```
+docs/
+├── 00_INDEX.md          本文件
+├── 10_research/         研究层
+├── 20_architecture/     架构层
+├── 30_plan/             计划层
+├── 40_experiments/      实验层
+├── 50_records/          记录层
+├── 60_outputs/          输出层
+└── _archive/            归档（只读）
+```
 
 ---
 
@@ -30,37 +45,44 @@
 
 | 文件 | 内容 | 何时更新 |
 |---|---|---|
-| `10_research.md` | 研究问题、定位、三轴设计、核心假设、贡献陈述 | 研究方向变更 |
-| `11_related_work.md` | 文献威胁矩阵、逐篇对照分析、幸存空间 | 读到新的相关论文 |
+| `10_research/10_research.md` | 研究问题、定位、三轴设计、核心假设、贡献陈述 | 研究方向变更 |
+| `10_research/11_related_work.md` | 文献威胁矩阵、逐篇对照分析、幸存空间 | 读到新的相关论文 |
 
 ### 架构层
 
 | 文件 | 内容 | 何时更新 |
 |---|---|---|
-| `20_architecture.md` | 教师系统、学生统一底座、五个实验臂的架构、数据流 | 模型结构变更 |
-| `21_data_spec.md` | Episode 目录、CSV/npz schema、采集协议、坐标系 | 数据格式变更 |
+| `20_architecture/20_architecture.md` | 教师系统、学生统一底座、五个实验臂的架构、数据流 | 模型结构变更 |
+| `20_architecture/21_data_spec.md` | Episode 目录、CSV/npz schema、采集协议、坐标系 | 数据格式变更 |
 
 ### 计划层
 
 | 文件 | 内容 | 何时更新 |
 |---|---|---|
-| `30_plan.md` | 四轮螺旋计划、决策门、交付物、资产处置 | 轮次切换、决策门判定后 |
-| `31_schedule.md` | 21 周逐周任务、周会汇报点 | 每周（进度对齐） |
+| `30_plan/30_plan.md` | 四轮螺旋计划、决策门、交付物、资产处置 | 轮次切换、决策门判定后 |
+| `30_plan/31_schedule.md` | 21 周逐周任务、周会汇报点 | 每周（进度对齐） |
+| `30_plan/32_weekly_report.md` | ⭐ **每周汇报材料**（会前填，倒序累积） | 每周会前 |
 
 ### 实验层
 
 | 文件 | 内容 | 何时更新 |
 |---|---|---|
-| `40_experiments.md` | 实验矩阵、命名规范、训练配置、评估协议、统计口径 | 新增实验臂/指标 |
-| `41_diagnostics.md` | R1 诊断实验 T1–T5 的详细设计与结论 | R1 期间 |
+| `40_experiments/40_experiments.md` | 实验矩阵、命名规范、训练配置、评估协议、统计口径 | 新增实验臂/指标 |
+| `40_experiments/41_diagnostics.md` | R1 诊断实验 T1–T5 的详细设计与结论 | R1 期间 |
 
 ### 记录层（最易变）
 
 | 文件 | 内容 | 何时更新 |
 |---|---|---|
-| `50_log.md` | 实验流水账（追加式，倒序） | 每次实验后 |
-| `51_issues.md` | 错误与踩坑记录 | 每次踩坑后 |
-| `52_environment.md` | 系统环境、ROS 话题映射、启动序列、命令速查 | 环境变更 |
+| `50_records/50_log.md` | 实验流水账（追加式，倒序） | 每次实验后 |
+| `50_records/51_issues.md` | 错误与踩坑记录 | 每次踩坑后 |
+| `50_records/52_environment.md` | 系统环境、ROS 话题映射、启动序列、命令速查 | 环境变更 |
+
+### 输出层
+
+| 文件 | 内容 | 何时更新 |
+|---|---|---|
+| `60_outputs/60_figure_specs.md` | 7 张项目框架图的规格说明（喂给生成式 AI 用） | 架构或计划变更后 |
 
 ### 项目根目录
 
@@ -77,15 +99,16 @@
 
 | 预留编号 | 用途示例 |
 |---|---|
-| `12_` | 论文定位陈述、投稿目标分析 |
 | `13_` | 贡献声明的英文定稿 |
 | `22_` | 学生模型变体、骨干网络对比 |
 | `23_` | 教师系统深入分析 |
-| `32_` | 里程碑与答辩准备 |
+| `12_` | 论文定位陈述、投稿目标分析 |
+| `33_` | 里程碑与答辩准备 |
 | `42_` | 鲁棒性评估协议（R3 展开时） |
 | `43_` | 对抗攻击实验设计（R4 保留项） |
-| `53_` | 周会记录 |
-| `54_` | 论文写作素材库 |
+| `53_` | 会议纪要 |
+| `61_` | 论文写作素材库 |
+| `62_` | 答辩幻灯片素材 |
 
 ---
 
@@ -99,19 +122,19 @@
 
 | 目录 | 内容 | 归档日期 | 原因 |
 |---|---|---|---|
-| `_archive/2026-09_v1/` | v1 全部文档（`research.md`、`CLAUDE_v1.md`、`README_v1.md`、`DONE.md`、`suggestion.md`、`docs/00–06`、`report.tex`、绘图脚本、`commands.txt`） | 2026-09-07 | 研究方向变更（见 `10_research.md` §1），v1 方案的核心主张已被文献推翻 |
+| `_archive/2026-09_v1/` | v1 全部文档（`research.md`、`CLAUDE_v1.md`、`README_v1.md`、`DONE.md`、`suggestion.md`、`docs/00–06`、`report.tex`、绘图脚本、`commands.txt`） | 2026-09-07 | 研究方向变更（见 `10_research/10_research.md` §1），v1 方案的核心主张已被文献推翻 |
 
 **从 v1 迁入新文档的内容**：
 
 | v1 位置 | 迁往 |
 |---|---|
-| `research.md` §4 教师系统 / §5.3 机体系理由 / §6.3 划分规则 | `20_architecture.md`、`21_data_spec.md` |
-| `DONE.md` §6 yaw_rate 失败数据 | `10_research.md` §3、`41_diagnostics.md` |
+| `research.md` §4 教师系统 / §5.3 机体系理由 / §6.3 划分规则 | `20_architecture/20_architecture.md`、`20_architecture/21_data_spec.md` |
+| `DONE.md` §6 yaw_rate 失败数据 | `10_research/10_research.md` §3、`40_experiments/41_diagnostics.md` |
 | `CLAUDE_v1.md` §8 严格规则 | `CLAUDE.md` |
-| `CLAUDE_v1.md` §10–14 实现细节 | `20_architecture.md`、`40_experiments.md`（**按新方案重写**，非原样搬运） |
-| `docs/01_environment_log.md` + `02_topic_mapping.md` + `commands.txt` | `52_environment.md` |
-| `docs/03_data_schema.md` | `21_data_spec.md` |
-| `docs/05_error_log.md` | `51_issues.md` |
+| `CLAUDE_v1.md` §10–14 实现细节 | `20_architecture/20_architecture.md`、`40_experiments/40_experiments.md`（**按新方案重写**，非原样搬运） |
+| `docs/01_environment_log.md` + `02_topic_mapping.md` + `commands.txt` | `50_records/52_environment.md` |
+| `docs/03_data_schema.md` | `20_architecture/21_data_spec.md` |
+| `docs/05_error_log.md` | `50_records/51_issues.md` |
 | `docs/04_experiment_log.md` | 不迁移（旧方法论已废）。历史证据按需从归档引用 |
 
 ---
@@ -120,4 +143,4 @@
 
 - **正文中文**
 - **引用、术语、代码标识符、论文标题保留英文**（如 `yaw_rate`、`InfoNCE`、`Loquercio et al. 2021`）
-- 需要直接进论文的段落（贡献陈述、研究问题），在 `10_research.md` 中附英文版
+- 需要直接进论文的段落（贡献陈述、研究问题），在 `10_research/10_research.md` 中附英文版

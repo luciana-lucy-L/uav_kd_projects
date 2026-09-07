@@ -53,7 +53,7 @@ CERLAB 教师                        对应的臂
 | **JointKD** | `τ` + `U` | 规划 + 执行组合 |
 | **第 5 臂** 🟡 | 感知输出（待定） | "教师**看到**了什么" |
 
-🟡 第 5 臂待定：候选 DepthAux / OccAux / DynObsAux / 不设，R1 诊断后决策（[`docs/20_architecture.md`](docs/20_architecture.md) §3.2）。
+🟡 第 5 臂待定：候选 DepthAux / OccAux / DynObsAux / 不设，R1 诊断后决策（[`docs/20_architecture/20_architecture.md`](docs/20_architecture/20_architecture.md) §3.2）。
 
 **核心假设**：结构化的教师知识（轨迹 / 控制序列），相比纯动作模仿，让小容量学生在压缩后与受扰动时退化得更慢。
 
@@ -79,7 +79,7 @@ CERLAB 教师                        对应的臂
 | R3 | W12–W16 | 压缩轴 + 鲁棒性轴 | ⬜ |
 | R4 | W18–W21 | 保留项 + 定稿 | ⬜ |
 
-**下一个动作**：诊断实验 T1 / T2 / T4（[`docs/41_diagnostics.md`](docs/41_diagnostics.md)）
+**下一个动作**：诊断实验 T1 / T2 / T4（[`docs/40_experiments/41_diagnostics.md`](docs/40_experiments/41_diagnostics.md)）
 **下一个决策门**：G0（W2 末）
 
 ### R1 要解决的核心问题
@@ -102,7 +102,13 @@ uav_kd_project/
 ├── README.md              本文件（一页现状）
 ├── CLAUDE.md              工作规则 + 文档索引
 ├── docs/                  全部文档（见 docs/00_INDEX.md）
-│   └── _archive/          v1 历史版本（只读）
+│   ├── 10_research/           研究问题、文献威胁分析
+│   ├── 20_architecture/       教师/学生/五个臂、数据规格
+│   ├── 30_plan/               四轮计划、逐周排期、周会汇报
+│   ├── 40_experiments/        实验矩阵、评估协议、R1 诊断
+│   ├── 50_records/            实验日志、踩坑、环境话题
+│   ├── 60_outputs/            框架图规格、论文素材
+│   └── _archive/              v1 历史版本（只读）
 ├── kd_uav/                Python 训练包
 ├── configs/               YAML 配置（arms / capacity）
 ├── ros_ws/src/            ROS 包（采集 / 部署 / 评估）
@@ -136,7 +142,7 @@ source /home/l/catkin_ws/devel/setup.bash
 source /home/l/cerlab_ws/devel/setup.bash
 ```
 
-完整启动序列、话题映射、常用命令见 [`docs/52_environment.md`](docs/52_environment.md)。
+完整启动序列、话题映射、常用命令见 [`docs/50_records/52_environment.md`](docs/50_records/52_environment.md)。
 
 ---
 
@@ -144,4 +150,4 @@ source /home/l/cerlab_ws/devel/setup.bash
 
 2026-09-07 → 2027-01-31（21 周），4–5 天/周 × 5–8 h。
 四轮螺旋：R1+R2 完成即构成合格论文主体，R3 补齐压缩与鲁棒两轴，R4 整轮可牺牲。
-详见 [`docs/30_plan.md`](docs/30_plan.md) 与 [`docs/31_schedule.md`](docs/31_schedule.md)。
+详见 [`docs/30_plan/30_plan.md`](docs/30_plan/30_plan.md) 与 [`docs/30_plan/31_schedule.md`](docs/30_plan/31_schedule.md)。

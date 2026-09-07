@@ -1,8 +1,8 @@
 # 实验协议
 
 > 层级：实验层。**新增实验臂或评估指标时修改本文件。**
-> 版本：v2（2026-09-07）。架构定义见 `20_architecture.md`，排期见 `31_schedule.md`
-> 诊断实验单列于 `41_diagnostics.md`
+> 版本：v2（2026-09-07）。架构定义见 `20_architecture/20_architecture.md`，排期见 `30_plan/31_schedule.md`
+> 诊断实验单列于 `40_experiments/41_diagnostics.md`
 
 ---
 
@@ -22,7 +22,7 @@
 - **R3 补齐**：6 个容量配置
 - 合计约 12–15 个训练配置
 
-🟡 **第 5 臂（感知层）待定**：原 FeatKD 方案已否决（教师无神经 latent，见 `20_architecture.md` §3.2）。
+🟡 **第 5 臂（感知层）待定**：原 FeatKD 方案已否决（教师无神经 latent，见 `20_architecture/20_architecture.md` §3.2）。
 候选为 DepthAux / OccAux / DynObsAux / 不设。**决策时点：R1 结束后、R2-W8 之前。** 在此之前不投入工时。
 
 ### 1.2 C 轴（评估维度，不增加训练）
@@ -100,7 +100,7 @@ configs/
 | 项 | 值 |
 |---|---|
 | 数据集 | 同一 `uav_kd_v2xx` |
-| 划分 | 按 episode（见 `21_data_spec.md` §4.3） |
+| 划分 | 按 episode（见 `20_architecture/21_data_spec.md` §4.3） |
 | 输入分辨率 | 224×224（BGR→RGB，归一化 [0,1]） |
 | 序列窗口 T | 8（初值） |
 | 优化器 | Adam，lr=1e-4，weight_decay=1e-4 |
@@ -167,7 +167,7 @@ configs/
 
 ## 5. 部署评估预算分配
 
-总预算约 120 次飞行（见 `30_plan.md` §6）。
+总预算约 120 次飞行（见 `30_plan/30_plan.md` §6）。
 
 | 阶段 | 配置 | 次数 |
 |---|---|---|
@@ -185,7 +185,7 @@ configs/
 
 | 记录 | 位置 |
 |---|---|
-| 每次训练/部署的流水 | `50_log.md`（追加，倒序） |
+| 每次训练/部署的流水 | `50_records/50_log.md`（追加，倒序） |
 | 汇总表格 | `results/tables/` |
 | 图表 | `results/figures/` |
 | 部署原始 CSV | `results/deployment/<arm>_<capacity>/` |

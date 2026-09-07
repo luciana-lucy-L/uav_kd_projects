@@ -41,7 +41,7 @@ source ~/miniconda3/etc/profile.d/conda.sh && conda activate dbc241
 | ROS / Gazebo / 采集节点 / 部署节点 | **系统 Python，先 `conda deactivate`** |
 | 数据集构建 / 训练 / 评估 / 诊断 | **`dbc241`** |
 
-**绝不在 conda 激活状态下启动 ROS 节点**（原因见 `51_issues.md` 第一条）。
+**绝不在 conda 激活状态下启动 ROS 节点**（原因见 `50_records/51_issues.md` 第一条）。
 部署节点的 launch 文件用 `launch-prefix` 指定 dbc241 的 python，绕过 catkin wrapper 的 shebang。
 
 ---
@@ -95,7 +95,7 @@ float32 yaw                          # 期望偏航角 ← 差分得 yaw_rate
 **动作标签**：
 ```
 u_t = [velocity.x, velocity.y, velocity.z, wrap(yaw[t]-yaw[t-1])/dt]
-（再旋转到机体系，见 21_data_spec.md §1）
+（再旋转到机体系，见 20_architecture/21_data_spec.md §1）
 ```
 
 ### 3.3 状态与相机话题
@@ -109,7 +109,7 @@ u_t = [velocity.x, velocity.y, velocity.z, wrap(yaw[t]-yaw[t-1])/dt]
 
 ### 3.4 教师的其他知识层输出（2026-09-07 源码扫描新增）
 
-**当前未使用，但可作为第 5 臂（感知层）的蒸馏标签** —— 见 `20_architecture.md` §1.2 与 §3.2。
+**当前未使用，但可作为第 5 臂（感知层）的蒸馏标签** —— 见 `20_architecture/20_architecture.md` §1.2 与 §3.2。
 
 | 层 | 话题 | 类型 |
 |---|---|---|
@@ -184,7 +184,7 @@ roslaunch uav_simulator start.launch
 
 启动：Gazebo 11 + 四旋翼模型（含深度相机插件）+ 话题限频节点 + TF。
 
-**换 world**：编辑 `start.launch` 注释行（不能用命令行覆盖，见 `51_issues.md`）。
+**换 world**：编辑 `start.launch` 注释行（不能用命令行覆盖，见 `50_records/51_issues.md`）。
 数据采集推荐 `worlds/corridor/corridor_dynamic_9_nohuman.world`。
 
 ### 终端 2 — CERLAB 教师

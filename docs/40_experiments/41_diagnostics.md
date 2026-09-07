@@ -1,8 +1,8 @@
 # R1 诊断实验设计（T1–T5）
 
 > 层级：实验层。**R1 期间填写结论，之后冻结。**
-> 版本：v2（2026-09-07）。现象与机制假设见 `10_research.md` §3
-> ⚠️ **本组实验必须在采集任何新数据之前完成。** 其结论直接决定采集协议（`21_data_spec.md` §5）
+> 版本：v2（2026-09-07）。现象与机制假设见 `10_research/10_research.md` §3
+> ⚠️ **本组实验必须在采集任何新数据之前完成。** 其结论直接决定采集协议（`20_architecture/21_data_spec.md` §5）
 
 ---
 
@@ -35,7 +35,7 @@ v1 的三个学生模型全部无法复现教师转向能力（教师 yaw_rate s
 | `data/processed/uav_kd_v002/` | T1, T3, T4 |
 | `data/raw/ep_*` | T4 近邻分析 |
 
-**运行环境**：`conda activate dbc241`（见 `52_environment.md`）
+**运行环境**：`conda activate dbc241`（见 `50_records/52_environment.md`）
 
 ---
 

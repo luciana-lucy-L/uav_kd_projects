@@ -1,7 +1,7 @@
 # 相关工作对照与威胁分析
 
 > 层级：研究层。**读到新的相关论文时修改本文件。**
-> 版本：v2（2026-09-07）。研究定位见 `10_research.md`
+> 版本：v2（2026-09-07）。研究定位见 `10_research/10_research.md`
 > PDF 存放于 `/home/l/Downloads/papers/`
 
 ---
@@ -67,7 +67,7 @@
 **可借用的三样工具**：
 | 他们的做法 | 对本研究的意义 |
 |---|---|
-| **R-WTA 多假设输出** | 对"标签多峰 → MSE 回归到均值"的标准解法。本项目 yaw_rate 坍缩正是此病（`41_diagnostics.md` M2） |
+| **R-WTA 多假设输出** | 对"标签多峰 → MSE 回归到均值"的标准解法。本项目 yaw_rate 坍缩正是此病（`40_experiments/41_diagnostics.md` M2） |
 | **DAgger** | 本项目教师在同一 Gazebo 中在线可跑，DAgger 近乎免费，且解决"学生卡住后回不来"的闭环失效 |
 | **方向向量作目标输入** | 廉价目标指定的存在证明之一 |
 
@@ -97,7 +97,7 @@
 
 **他们的教师是 RL 黑箱，内部没有"规划层""执行层"之分。可提取的知识只有动作与中间 embedding —— 用 InfoNCE 对齐 latent 不是设计偏好，是被教师结构逼出来的唯一选择。**
 
-这正是本研究的立足点：可分解的经典教师能问一个他们结构上问不出来的问题（`10_research.md` §2.1）。
+这正是本研究的立足点：可分解的经典教师能问一个他们结构上问不出来的问题（`10_research/10_research.md` §2.1）。
 
 #### 可借用
 
@@ -210,7 +210,7 @@
 | 部署丢弃轨迹头 | 部署融合两分支 |
 
 🔶 **JointKD ≈ TCP 减去分支间连接与融合。架构层面是做减法，不是提出。方法层 novelty 归零。**
-→ v2 中 JointKD 降级为消融臂（`10_research.md` §7）。
+→ v2 中 JointKD 降级为消融臂（`10_research/10_research.md` §7）。
 
 ### 5.2 CILRS (Codevilla et al. 2019)
 
@@ -218,7 +218,7 @@
 
 ### 5.3 *Exploring the Limitations of Behavior Cloning for Autonomous Driving*
 
-本地 `09 ...pdf` ⚠️ 未详读。BC 的局限性分析（数据偏差、泛化、因果混淆），🔶 与本研究的诊断章节（`41_diagnostics.md`）直接相关，**建议优先读**。
+本地 `09 ...pdf` ⚠️ 未详读。BC 的局限性分析（数据偏差、泛化、因果混淆），🔶 与本研究的诊断章节（`40_experiments/41_diagnostics.md`）直接相关，**建议优先读**。
 
 ---
 

@@ -1,7 +1,7 @@
 # 研究计划（四轮螺旋）
 
 > 层级：计划层。**轮次切换、决策门判定后修改本文件。**
-> 版本：v2（2026-09-07）。逐周排期见 `31_schedule.md`，实验细节见 `40_experiments.md`
+> 版本：v2（2026-09-07）。逐周排期见 `30_plan/31_schedule.md`，实验细节见 `40_experiments/40_experiments.md`
 > 周期：2026-09-07 → 2027-01-31（21 周），4–5 天/周 × 5–8 h ≈ 500–700 h
 
 ---
@@ -32,12 +32,12 @@
 
 | 交付物 | 去向 |
 |---|---|
-| T1–T5 诊断结论 | `41_diagnostics.md`、`10_research.md` §3 |
-| v2 采集协议定稿 | `21_data_spec.md` §5 |
+| T1–T5 诊断结论 | `40_experiments/41_diagnostics.md`、`10_research/10_research.md` §3 |
+| v2 采集协议定稿 | `20_architecture/21_data_spec.md` §5 |
 | 新数据集（含目标点） | `data/processed/uav_kd_v2xx/` |
 | `uav_kd_eval_tools` 可用 | 批量部署 + SR/CR 自动测量 |
-| 代码底座（config 驱动） | `20_architecture.md` §6 |
-| BC-new / TrajKD-new 部署对比 | `50_log.md` |
+| 代码底座（config 驱动） | `20_architecture/20_architecture.md` §6 |
+| BC-new / TrajKD-new 部署对比 | `50_records/50_log.md` |
 | 论文「数据与方法」「诊断分析」章节初稿 | — |
 
 ### R2「知识层级」
@@ -77,7 +77,7 @@
 
 ## 3. 决策门
 
-每轮末必须做出明确判定并记入 `50_log.md`。
+每轮末必须做出明确判定并记入 `50_records/50_log.md`。
 
 ### 🚪 G0（W2 末）诊断结论是否明确
 
@@ -165,7 +165,7 @@
 | 补齐 goal+LSTM 后各 KD 臂差距消失 | 🔴 高 | 提前把**样本效率**和**新路线泛化**作为主指标，不只看最终 SR |
 | 采集后转向/岔路情形仍覆盖不足 | 🟠 中 | 采集协议明确要求岔路口、多目标、往返 |
 | LSTM 训练不稳 / 序列构造出错 | 🟠 中 | 先用 T=8 小窗口验证管线 |
-| ~~FeatKD 的"教师表征"无合理定义~~ | — | **已解决（2026-09-07）**：FeatKD 方案否决；教师感知模块有真实输出可蒸馏（`2D_occupancy_map` / `tracked_bboxes`）。第 5 臂改为待定，R1 后决策（`20_architecture.md` §3.2） |
+| ~~FeatKD 的"教师表征"无合理定义~~ | — | **已解决（2026-09-07）**：FeatKD 方案否决；教师感知模块有真实输出可蒸馏（`2D_occupancy_map` / `tracked_bboxes`）。第 5 臂改为待定，R1 后决策（`20_architecture/20_architecture.md` §3.2） |
 | DAgger 闭环不稳定 | 🟠 中 | 按 Loquercio 做法逐步放宽跟踪阈值 |
 
 ### 论证风险

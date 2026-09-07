@@ -67,7 +67,7 @@ RLException: Invalid <arg> tag: cannot override arg 'world_name', which has alre
 
 **修复**：教师控制标签取自 `/autonomous_flight/target_state`（`.velocity` + `.yaw`）。
 
-**预防**：见 `52_environment.md` §3 的话题角色表。
+**预防**：见 `50_records/52_environment.md` §3 的话题角色表。
 
 ---
 
@@ -112,6 +112,6 @@ RLException: Invalid <arg> tag: cannot override arg 'world_name', which has alre
 | GPU | GTX 1080 Ti，驱动 535.230.02 | **RTX 2080 Ti，驱动 570.133.07** |
 | torch | 2.4.1+cpu | **2.4.1+cu121，CUDA 可用** |
 
-**预防**：环境信息以实测为准，写入 `52_environment.md` 时附核实日期。
+**预防**：环境信息以实测为准，写入 `50_records/52_environment.md` 时附核实日期。
 
 <!-- 新条目追加到下方 -->

@@ -10,7 +10,7 @@
 | 项 | 值 |
 |---|---|
 | 阶段 | **R1「诊断 + 地基」W1**（2026-09-07 起） |
-| 下一个动作 | 诊断实验 T1 / T2 / T4（见 `docs/41_diagnostics.md`） |
+| 下一个动作 | 诊断实验 T1 / T2 / T4（见 `docs/40_experiments/41_diagnostics.md`） |
 | 下一个决策门 | **G0**（W2 末，诊断结论是否明确） |
 | 研究定位 | 系统性实证研究：知识层级 × 学生容量 × 扰动鲁棒性 |
 
@@ -22,17 +22,19 @@
 
 | 想知道什么 | 看哪里 |
 |---|---|
-| 研究问题、定位、贡献、核心假设 | `docs/10_research.md` |
-| 文献威胁分析、能声称什么 | `docs/11_related_work.md` |
-| 教师系统、学生架构、五个实验臂 | `docs/20_architecture.md` |
-| 数据 schema、采集协议、坐标系 | `docs/21_data_spec.md` |
-| 四轮螺旋计划、决策门、风险 | `docs/30_plan.md` |
-| 逐周排期、周会汇报点 | `docs/31_schedule.md` |
-| 实验矩阵、命名、评估协议 | `docs/40_experiments.md` |
-| R1 诊断实验 T1–T5 | `docs/41_diagnostics.md` |
-| 实验流水账 | `docs/50_log.md` |
-| 踩坑记录 | `docs/51_issues.md` |
-| 环境、ROS 话题、启动命令 | `docs/52_environment.md` |
+| 研究问题、定位、贡献、核心假设 | `docs/10_research/10_research.md` |
+| 文献威胁分析、能声称什么 | `docs/10_research/11_related_work.md` |
+| 教师系统、学生架构、五个实验臂 | `docs/20_architecture/20_architecture.md` |
+| 数据 schema、采集协议、坐标系 | `docs/20_architecture/21_data_spec.md` |
+| 四轮螺旋计划、决策门、风险 | `docs/30_plan/30_plan.md` |
+| 逐周排期、周会汇报点 | `docs/30_plan/31_schedule.md` |
+| ⭐ **每周汇报材料** | `docs/30_plan/32_weekly_report.md` |
+| 实验矩阵、命名、评估协议 | `docs/40_experiments/40_experiments.md` |
+| R1 诊断实验 T1–T5 | `docs/40_experiments/41_diagnostics.md` |
+| 实验流水账 | `docs/50_records/50_log.md` |
+| 踩坑记录 | `docs/50_records/51_issues.md` |
+| 环境、ROS 话题、启动命令 | `docs/50_records/52_environment.md` |
+| 框架图规格（出图用） | `docs/60_outputs/60_figure_specs.md` |
 
 ---
 
@@ -43,7 +45,7 @@
 1. **绝不修改 CERLAB 源码**（`/home/l/cerlab_ws/`）
 2. **绝不修改 uav_simulator**（`/home/l/catkin_ws/`）
 3. **R1 结束前，绝不删除或移动** `runs/*`、`data/raw/*`、`data/processed/uav_kd_v002`
-   —— 诊断实验直接依赖它们（`docs/41_diagnostics.md` §1）
+   —— 诊断实验直接依赖它们（`docs/40_experiments/41_diagnostics.md` §1）
 
 ### 研究约束
 
@@ -62,14 +64,14 @@
 
 11. **跨臂比较只用可比指标**（Ctrl MSE、分层指标、SR/CR、相对退化率），**绝不比 val loss** —— 不同臂的 loss 定义不同
 12. 每个配置 **≥ 2 个随机种子**，报告均值±标准差
-13. 公平对照的七条红线见 `docs/40_experiments.md` §7，违反任意一条整组作废
+13. 公平对照的七条红线见 `docs/40_experiments/40_experiments.md` §7，违反任意一条整组作废
 14. 失败实验**不删记录**，负结果是本研究的合法产出
 
 ### 工作方式
 
 15. 改文件前先说明**改哪些、为什么**
 16. 改完列出**所有变更文件** + **可复现的运行命令** + **预期输出**
-17. 每次实验后追加 `docs/50_log.md`；踩坑后追加 `docs/51_issues.md`
+17. 每次实验后追加 `docs/50_records/50_log.md`；踩坑后追加 `docs/50_records/51_issues.md`
 18. **改一件事只改一个文件**：研究方向变 → `10`；进度滑 → `31`；加实验臂 → `40`
 
 ---
@@ -85,4 +87,4 @@
 | 卖通用预训练模型 | 需 zero-shot 跨场景泛化，数据量不支持 |
 | 追求极限压缩率 | Tiny-PULP-Dronet 已压至 2.9 kB，不在此竞争 |
 
-详见 `docs/10_research.md` §7。
+详见 `docs/10_research/10_research.md` §7。
