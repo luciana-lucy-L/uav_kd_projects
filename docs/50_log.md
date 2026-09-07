@@ -46,6 +46,59 @@
 
 <!-- 新条目插入到这一行下方 -->
 
+## 2026-09-07 — 教师系统（CERLAB）源码扫描与替代方案评估
+
+**轮次**：R1 前置
+**目的**：确认教师是否有可用更新；评估是否应更换 expert；核查教师暴露的全部知识层
+
+### 1. 版本状态
+
+| 项 | 值 |
+|---|---|
+| 本地 HEAD | `e045ce55`（2025-04-02） |
+| 上游 HEAD（`git ls-remote`） | `e045ce55` —— **完全一致，无更新可用** |
+| 各模块最后提交 | onboard_detector 2025-04 / map_manager 2024-10 / autonomous_flight 2024-04 / time_optimizer 2024-03 / global_planner 2024-01 / trajectory_planner、tracking_controller 2023-12 |
+
+**结论**：上游基本停更，教师可视为稳定冻结的依赖，无跟进成本。
+
+### 2. ⭐ 重大发现：教师的可分解性远超 v1 假设
+
+源码 `advertise` 扫描显示 CERLAB 暴露 **5 个知识层**，v1 只用了其中 2 个：
+
+| 层 | 代表话题 | v1 是否使用 |
+|---|---|---|
+| 感知-静态几何 | `2D_occupancy_map`、`esdf`、`voxel_map` | ❌ |
+| 感知-动态障碍 | `tracked_bboxes`、`history_trajectories`、`velocity_visualizaton` | ❌ |
+| 全局规划 | `rrt_path` | ❌ |
+| 局部规划 | `bspline_trajectory`（+ `poly_traj`/`pwl_trajectory` 等优化前中间阶段） | ✅ |
+| 控制 | `target_state` | ✅ |
+
+另发现两个 ROS service：`check_pos_collision`、`raycast` —— 可**主动查询**教师，对 DAgger 有价值。
+
+**对研究的影响**：
+1. "可分解教师"从一个勉强的说法变成有 5 个真实层次的系统，直接强化 `10_research.md` 的核心立论
+2. **解决了第 5 臂的困境** —— 感知层有真实产物可蒸馏，不需要人造"教师表征"
+3. 局部规划内部还可再分（优化前 / 优化后），支持更细的消融
+
+### 3. 替代教师评估：不更换
+
+| 候选 | 结论 |
+|---|---|
+| **EGO-Planner / ego-planner-swarm** (ZJU FAST Lab) | ❌ **planner-only**，无独立跟踪控制器、无动态障碍检测、无 ESDF 地图模块 → 层数更少，**直接削弱可分解性立论** |
+| **Fast-Planner** (HKUST) | ❌ 同上，是 EGO-Planner / FUEL / RACER 的基础框架，仍是规划器而非完整栈 |
+| **DYNUS** (MIT ACL, 2025, arXiv:2504.16734) | ❌ ROS 2 Humble / Ubuntu 22.04（本机为 ROS Noetic / Ubuntu 20.04）；**后端优化器依赖 Gurobi 商业许可** → 迁移成本极高 |
+
+**结论：保留 CERLAB。** 它恰恰因为是"完整模块化栈"而非"规划器"，才适合本研究的可分解性立论。换成任何 planner-only 方案都会让 A 轴的层数减少。
+
+### 4. 决策：第 5 臂（感知层）标为待定
+
+原 FeatKD（InfoNCE latent 对齐）方案**否决** —— 经典教师无神经 embedding，人造"教师表征"会破坏 A 轴一致性。
+改为待定，候选 DepthAux / OccAux / DynObsAux / 不设，**R1 诊断后决策**（`20_architecture.md` §3.2）。
+
+**下一步**：R1-W1 启动诊断实验 T1/T2/T4
+
+---
+
 ## 2026-09-07 — 文档体系 v2 建立
 
 **轮次**：R1 前置

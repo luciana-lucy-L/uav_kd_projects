@@ -28,9 +28,49 @@
 | 目标点 | `/move_base_simple/goal` | 事件触发 | **目标条件化输入（v2 新增）** |
 | 位姿 / 里程计 | `/CERLAB/quadcopter/pose`, `/odom` | 30 Hz | 同步基准 + 目标向量换算 |
 
+### 1.2 教师暴露的完整知识层（2026-09-07 源码扫描）⭐
+
+**扫描结论：教师的可分解性远超 v1 的假设。** v1 只用了 2 层（轨迹 + 控制），实际暴露 **5 层**：
+
+| 层 | 话题 | 消息类型 | 蒸馏可行性 |
+|---|---|---|---|
+| **感知-静态几何** | `<ns>/2D_occupancy_map` | `nav_msgs/OccupancyGrid` | ⭐ **最适合做 dense prediction 标签**（规则网格） |
+| | `<ns>/esdf` | `sensor_msgs/PointCloud2` | 欧氏符号距离场（障碍距离 + 梯度） |
+| | `<ns>/voxel_map`, `/inflated_voxel_map`, `/explored_voxel_map` | `PointCloud2` | 占据栅格 |
+| **感知-动态障碍** | `<ns>/tracked_bboxes`, `/dynamic_bboxes` | `MarkerArray` | 跟踪的动态障碍框 |
+| | `<ns>/history_trajectories`, `/velocity_visualizaton` | `MarkerArray` | 障碍历史轨迹与速度 |
+| | `<ns>/dynamic_point_cloud`, `/filtered_depth_cloud` | `PointCloud2` | |
+| **全局规划** | `dynamicNavigation/rrt_path` | `nav_msgs/Path` | 全局路径（需开 `use_global_planner`） |
+| **局部规划** | `dynamicNavigation/bspline_trajectory` | `nav_msgs/Path` | ✅ 当前使用 |
+| | `dynamicNavigation/poly_traj`, `/input_trajectory`, `/pwl_trajectory` | `nav_msgs/Path` | **B样条优化前的中间阶段** —— 支持"规划层内部再分"的更细消融 |
+| **控制** | `/autonomous_flight/target_state` | `tracking_controller/Target` | ✅ 当前使用 |
+
+**两个可主动查询的 ROS service**（不只是被动录制）：
+
+| Service | 用途 |
+|---|---|
+| `<ns>/check_pos_collision` | 查询任意位置是否碰撞 |
+| `<ns>/raycast` | 射线投射查询 |
+
+🔶 **对研究的影响**：
+1. **"可分解教师"不是勉强的说法，是一个有 5 个真实层次的系统** —— 这直接强化 `10_research.md` 的核心立论
+2. **感知层有真实产物可蒸馏**（`2D_occupancy_map` / `tracked_bboxes`），不需要人造"教师表征" —— 见 §3.2
+3. 两个 service 对 **DAgger** 特别有价值：可直接询问教师"这个状态该怎么做/会不会撞"，而不只是回放录制数据
+
 ⚠️ **`/CERLAB/quadcopter/cmd_vel` 在自主飞行期间不发布**，只有键盘控制才发。教师控制标签必须取自 `target_state`。详见 `52_environment.md`。
 
-### 1.2 特权信息落差
+### 1.3 版本状态（2026-09-07 核实）
+
+| 项 | 值 |
+|---|---|
+| 仓库 | [github.com/Zhefan-Xu/CERLAB-UAV-Autonomy](https://github.com/Zhefan-Xu/CERLAB-UAV-Autonomy) |
+| 本地 HEAD | `e045ce55`（2025-04-02） |
+| 上游 HEAD | `e045ce55` —— **本地已是最新，无可用更新** |
+| 各模块最后提交 | onboard_detector 2025-04 / map_manager 2024-10 / autonomous_flight 2024-04 / time_optimizer 2024-03 / global_planner 2024-01 / trajectory_planner、tracking_controller 2023-12 |
+
+结论：上游基本处于停更状态，**不存在需要跟进的更新**。教师系统可视为稳定冻结的依赖。
+
+### 1.4 特权信息落差
 
 | | 教师 | 学生（部署时） |
 |---|---|---|
@@ -112,27 +152,46 @@
 | **TrajKD** | τ（辅助）+ u_t（主） | Traj + Ctrl | `λ_traj·L_traj + L_ctrl` | 单步 cmd_vel（Traj 头丢弃） |
 | **CtrlKD** | U_{t:t+H}（H 步序列） | CtrlSeq | `L_ctrl_seq = Σ_k w_k·MSE(u_s(t+k), u_T(t+k))` | receding horizon，执行 u_t |
 | **JointKD** | τ（辅助）+ U（主） | Traj + CtrlSeq | `λ_traj·L_traj + λ_ctrl·L_ctrl_seq` | receding horizon（Traj 头丢弃） |
-| **FeatKD** | 教师 latent 对齐 + u_t | Ctrl | `λ₀·L_act + λ₁·L_InfoNCE` | 单步 cmd_vel |
+| **第 5 臂（感知层）** | 🟡 **待定**，见 §3.2 | — | — | — |
 
 ### 3.1 各臂的角色
 
-| 臂 | 在 A 轴上的角色 |
-|---|---|
-| BC | 无蒸馏基线（只有动作层） |
-| TrajKD | 规划层知识 |
-| CtrlKD | 执行层知识 |
-| JointKD | 规划层 + 执行层 |
-| FeatKD | 表征层知识（复现 Li & Zhao 2026，作为对照基线） |
+| 臂 | 对应教师模块 | 在 A 轴上的角色 |
+|---|---|---|
+| BC | —（无蒸馏） | 基线：只有最终动作 |
+| TrajKD | 规划（局部） | 规划层知识 |
+| CtrlKD | 控制 | 执行层知识 |
+| JointKD | 规划 + 控制 | 两层组合 |
+| **第 5 臂** | **感知** | **感知层知识 —— 待定** |
 
 ⚠️ **JointKD 在 v2 中是消融臂，不是"提出的方法"**。原因见 `10_research.md` §1。
 
-### 3.2 FeatKD 实现说明
+### 3.2 🟡 第 5 臂（感知层）—— 待定，R1 诊断后决策
 
-复现 Li & Zhao 2026 的 InfoNCE latent 对齐：
-- 正样本对 = 全局位姿上空间接近的师生 embedding
-- `λ₁` 从 0.9 线性衰减到 0.1
-- ⚠️ **其官方仓库 [github.com/xiaowei1015/robot-kd](https://github.com/xiaowei1015/robot-kd) 目前基本为空**（README + 1 commit，板载代码待论文接收后上传）。**按从零实现估工时**
-- ⚠️ 本研究的教师是经典系统，**没有神经 latent 可对齐**。FeatKD 臂需要一个"教师表征"的替代定义——候选方案：用教师的深度图/占据栅格经一个固定编码器产生表征。**此设计待 R2-W8 前确定**
+**背景**：原计划设 FeatKD 臂，复现 Li & Zhao 2026 的 InfoNCE latent 对齐。**该方案已被否决**，原因：
+
+> Li & Zhao 的 InfoNCE 对齐的是**教师网络的 embedding**。CERLAB 是 B 样条规划器 + PID 控制器，**没有 embedding**。任何"教师表征"都是人造产物，不是教师的知识 —— 这破坏 A 轴"教师各模块真实中间产物"的内在一致性。
+
+**§1.2 的扫描结果解决了这个困境**：教师的**感知模块有真实的输出可蒸馏**，不需要人造表征。
+
+#### 候选方案
+
+| 方案 | 蒸馏标签 | 成本 | 说明 |
+|---|---|---|---|
+| **A. DepthAux** | `/camera/depth/image_raw`（降采样） | ~2–3 天 | 深度预测辅助头 + L1。最便宜，直接检验"单目缺几何信息"假设 |
+| **B. OccAux** | `<ns>/2D_occupancy_map` (`OccupancyGrid`) | ~3–4 天 | ⭐ 规则网格，天然适合 dense prediction；且是教师**加工后**的产物（比原始深度更"像知识"） |
+| **C. DynObsAux** | `<ns>/tracked_bboxes` + 速度 | ~4–5 天 | 动态障碍框与速度预测。最贴合"动态走廊"的应用叙事，也最能回答"为什么不用 VT&R" |
+| **D. 不设第 5 臂** | — | 0 | A 轴保持 4 臂（动作/规划/执行/组合），在 discussion 中说明感知层未纳入的原因 |
+
+#### 决策依据（R1 诊断后判定）
+
+| 若 R1 诊断显示 | 倾向 |
+|---|---|
+| **M2 主导**（标签多峰 / 信息瓶颈） | 感知层臂的必要性强 → 选 A 或 B |
+| **M1 主导**（类别不平衡） | 感知层臂必要性弱 → 可选 D 省时间 |
+| 应用叙事需要强化"动态障碍"差异化 | → 选 C |
+
+⚠️ **决策时点：R1 结束（W6）之后、R2-W8 之前。** 在此之前不投入实现工时。
 
 ---
 

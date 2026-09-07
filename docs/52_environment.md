@@ -107,7 +107,32 @@ u_t = [velocity.x, velocity.y, velocity.z, wrap(yaw[t]-yaw[t-1])/dt]
 | `/camera/depth/image_raw`、`/camera/depth/points` | ~30 Hz | 教师专用，学生不可用 |
 | `/camera/color/camera_info` | ~30 Hz | 内参 |
 
-### 3.4 ⚠️ 不要用的话题
+### 3.4 教师的其他知识层输出（2026-09-07 源码扫描新增）
+
+**当前未使用，但可作为第 5 臂（感知层）的蒸馏标签** —— 见 `20_architecture.md` §1.2 与 §3.2。
+
+| 层 | 话题 | 类型 |
+|---|---|---|
+| 感知-静态 | `<ns>/2D_occupancy_map` | `nav_msgs/OccupancyGrid` ⭐ 最适合 dense prediction |
+| | `<ns>/esdf` | `sensor_msgs/PointCloud2` |
+| | `<ns>/voxel_map`, `/inflated_voxel_map`, `/explored_voxel_map` | `PointCloud2` |
+| 感知-动态 | `<ns>/tracked_bboxes`, `/dynamic_bboxes` | `MarkerArray` |
+| | `<ns>/history_trajectories`, `/velocity_visualizaton` | `MarkerArray` |
+| | `<ns>/dynamic_point_cloud`, `/filtered_depth_cloud` | `PointCloud2` |
+| | `<ns>/detected_depth_map`, `/bird_view` | `sensor_msgs/Image` |
+| 全局规划 | `dynamicNavigation/rrt_path` | `nav_msgs/Path`（需开 `use_global_planner`） |
+| 局部规划中间阶段 | `dynamicNavigation/poly_traj`, `/input_trajectory`, `/pwl_trajectory` | `nav_msgs/Path` |
+
+**两个可主动查询的 service**（对 DAgger 有价值，可直接问教师而不只是回放录制）：
+
+| Service | 用途 |
+|---|---|
+| `<ns>/check_pos_collision` | 查询任意位置是否碰撞 |
+| `<ns>/raycast` | 射线投射 |
+
+⚠️ 上表的 `<ns>` 需在实机确认实际命名空间；`MarkerArray` 类型的话题是**可视化格式**，若要作训练标签需从中解析几何量（或改用对应的 PointCloud2 / OccupancyGrid 话题）。
+
+### 3.5 ⚠️ 不要用的话题
 
 | 话题 | 原因 |
 |---|---|
