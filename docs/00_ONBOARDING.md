@@ -137,4 +137,4 @@ v1 的三个学生模型全部无法复现教师的转向能力：
 | 查历史实验数字 | `50_records/50_log.md` |
 | 报错了 | `50_records/51_issues.md` |
 | 起 ROS / 查话题 / 找命令 | `50_records/52_environment.md` |
-| 出图 | `60_outputs/60_figure_specs.md` |
+| 出图 | `60_outputs/W0组会/`（5 张图各一份说明书） |

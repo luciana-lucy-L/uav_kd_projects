@@ -34,7 +34,7 @@
 | 实验流水账 | `docs/50_records/50_log.md` |
 | 踩坑记录 | `docs/50_records/51_issues.md` |
 | 环境、ROS 话题、启动命令 | `docs/50_records/52_environment.md` |
-| 框架图规格（出图用） | `docs/60_outputs/60_figure_specs.md` |
+| 框架图规格（出图用，5 张） | `docs/60_outputs/W0组会/`（总览图 / 实验臂对照 / 学生架构 / 实验设计 / 诊断逻辑） |
 
 ---
 
